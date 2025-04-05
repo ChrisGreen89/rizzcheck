@@ -184,7 +184,8 @@ class _HomeScreenState extends State<HomeScreen> {
       barrierDismissible: false, // User must tap button!
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text('Reset State?'),
+          title: Text('Reset State?',
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
           content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
