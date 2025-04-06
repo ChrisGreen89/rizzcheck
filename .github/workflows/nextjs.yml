@@ -27,15 +27,15 @@ concurrency:
 jobs:
   # Build job
   build:
-    defaults:
-      run:
-        working-directory: ./marketing-site
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set default working directory
+        run: echo "noop"
       - name: Detect package manager
         id: detect-package-manager
+        working-directory: ./marketing-site
         run: |
           if [ -f "${{ github.workspace }}/yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
