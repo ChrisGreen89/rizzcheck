@@ -99,6 +99,7 @@ export default function Home() {
                 alt="RizzCheck App Screenshot"
                 width={800}
                 height={450}
+                unoptimized={true} // Use unoptimized for faster loading
                 className="block object-cover" // Removed rounding/shadow here, apply to parent
                 priority
               />
@@ -117,7 +118,8 @@ export default function Home() {
                       alt="RizzCheck App Screenshot on App Store" 
                       width={800}
                       height={450}
-                      className="block object-cover" // Match base image styling
+                      className="block object-cover" 
+                      unoptimized={true}// Match base image styling
                       // No priority needed
                     />
                   </motion.div>
