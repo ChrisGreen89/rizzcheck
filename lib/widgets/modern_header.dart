@@ -225,26 +225,25 @@ class ModernHeader extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           decoration: BoxDecoration(
-            // Replace solid color with a gradient
-            // color: Theme.of(context).colorScheme.primaryContainer,
+            // Replace gradient with solid color
+            color: Theme.of(context).colorScheme.primaryContainer,
+            /*
             gradient: LinearGradient(
               colors: [
                 Theme.of(context).colorScheme.primary, // Start color
                 Theme.of(context)
                     .colorScheme
                     .secondary, // End color (or primaryVariant, etc.)
-                // Example using variations:
-                // Theme.of(context).colorScheme.primary,
-                // Theme.of(context).colorScheme.primary.withOpacity(0.8),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
+            */
             borderRadius: BorderRadius.circular(12.0),
             boxShadow: [
               BoxShadow(
-                // Adjust shadow color if needed to complement gradient
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                // Adjust shadow color for new background
+                color: Theme.of(context).colorScheme.shadow.withOpacity(0.2),
                 blurRadius: 6.0,
                 offset: const Offset(0, 3),
               ),
@@ -253,34 +252,37 @@ class ModernHeader extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Column for Points and Streak on the left
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              // Points Row on the left
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.star_rounded,
-                          // Ensure icon color contrasts with gradient
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          size: 20),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Points: ${pointsService.points}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          // Ensure text color contrasts with gradient
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                    ],
+                  Icon(Icons.star_rounded,
+                      // Ensure icon color contrasts with new background
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      size: 20),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Points: ${pointsService.points}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      // Ensure text color contrasts with new background
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
                   ),
-                  const SizedBox(height: 4),
+                ],
+              ),
+
+              // Row for Streak and potential Debug Buttons on the right
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Streak Row
                   Row(
                     children: [
                       Icon(Icons.local_fire_department_rounded,
-                          // Ensure icon color contrasts with gradient
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          // Ensure icon color contrasts with new background
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
                           size: 20),
                       const SizedBox(width: 6),
                       Text(
@@ -288,60 +290,77 @@ class ModernHeader extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          // Ensure text color contrasts with gradient
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          // Ensure text color contrasts with new background
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
                         ),
                       ),
                     ],
                   ),
+
+                  // Conditionally display Debug Action Buttons (with spacing)
+                  if (showDebugActions)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 8.0), // Add spacing before buttons
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.refresh),
+                            tooltip: 'Reset State (Debug)',
+                            iconSize: 20,
+                            // Ensure icon color contrasts with new background
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                            visualDensity: VisualDensity.compact,
+                            onPressed: () {
+                              _showResetConfirmationDialog(context);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.star),
+                            tooltip: 'Set Streak (Debug)',
+                            iconSize: 20,
+                            // Ensure icon color contrasts with new background
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                            visualDensity: VisualDensity.compact,
+                            onPressed: () {
+                              _showSetStreakDialog(context);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.list_alt),
+                            tooltip: 'Check Pending Notifications (Debug)',
+                            iconSize: 20,
+                            // Ensure icon color contrasts with new background
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                            visualDensity: VisualDensity.compact,
+                            onPressed: () =>
+                                _checkPendingNotifications(context),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.notifications_active),
+                            tooltip: 'Send Test Notification (Debug)',
+                            iconSize: 20,
+                            // Ensure icon color contrasts with new background
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                            visualDensity: VisualDensity.compact,
+                            onPressed: () => _sendTestNotification(context),
+                          ),
+                        ],
+                      ),
+                    )
+                  // Don't need SizedBox.shrink() here as the parent Row handles alignment
                 ],
               ),
-              // Conditionally display Debug Action Buttons
-              if (showDebugActions)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.refresh),
-                      tooltip: 'Reset State (Debug)',
-                      iconSize: 20,
-                      // Ensure icon color contrasts with gradient
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () {
-                        _showResetConfirmationDialog(context);
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.star),
-                      tooltip: 'Set Streak (Debug)',
-                      iconSize: 20,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () {
-                        _showSetStreakDialog(context);
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.list_alt),
-                      tooltip: 'Check Pending Notifications (Debug)',
-                      iconSize: 20,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () => _checkPendingNotifications(context),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.notifications_active),
-                      tooltip: 'Send Test Notification (Debug)',
-                      iconSize: 20,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () => _sendTestNotification(context),
-                    ),
-                  ],
-                )
-              else // Ensure the Row doesn't take up space if actions are hidden
-                const SizedBox.shrink(),
             ],
           ),
         ),

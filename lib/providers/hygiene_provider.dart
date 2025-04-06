@@ -153,9 +153,8 @@ class HygieneProvider with ChangeNotifier {
         await _notificationService
             .cancelNotification(NotificationService.urgentReminderId);
 
-        // Award points and mark date directly here
-        await _pointsService.awardDailyCompletionPoints();
-        await _pointsService.markDateAsCompleted(DateTime.now());
+        // Call the single method in PointsService that handles points AND streak
+        await _pointsService.recordDailyCompletion(DateTime.now());
       } else {
         print("DEBUG: Completion already processed for today ($todayString).");
       }
@@ -180,18 +179,13 @@ class HygieneProvider with ChangeNotifier {
 
       notifyListeners(); // Notify UI of the toggle change
 
-      // Check if ALL tasks are now completed AFTER notifying about the toggle
-      if (task.isCompleted && _areAllTasksCompleted()) {
-        print(
-            "DEBUG: All tasks completed for the day! Recording daily completion.");
-        _pointsService.recordDailyCompletion(DateTime.now());
-        // Optional: Add a delay before resetting tasks for the next day?
-        // Or handle reset elsewhere (e.g., start of day check)
-      }
+      // Call the correct method to check for daily completion
+      _checkAndHandleCompletion();
     }
   }
 
-  // Helper method to check if all tasks are completed
+  // Helper method to check if all tasks are completed (This is likely incorrect for daily points)
+  // Consider removing or renaming if not used elsewhere
   bool _areAllTasksCompleted() {
     // Use .every() for a concise check
     return _tasks.every((task) => task.isCompleted);

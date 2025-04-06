@@ -175,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   ModernHeader(
                     dailyQuote: _dailyQuote,
-                    showDebugActions: true,
+                    showDebugActions: false,
                     homeScreenContext: buildContext,
                   ),
                   Expanded(

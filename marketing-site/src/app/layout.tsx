@@ -9,7 +9,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "Boygiene - Level Up Your Hygiene Game",
+  title: "RizzCheck - Level Up Your Hygiene Game",
   description: "The app that helps young dudes build healthy habits, stay fresh, and earn rewards.",
 };
 
