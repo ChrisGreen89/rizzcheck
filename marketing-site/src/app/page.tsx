@@ -95,7 +95,7 @@ export default function Home() {
             >
               {/* Base Image (Always Visible) */}
               <Image
-                src="/apphome.png"
+                src="apphome.png"
                 alt="RizzCheck App Screenshot"
                 width={800}
                 height={450}
@@ -114,7 +114,7 @@ export default function Home() {
                     transition={{ duration: 0.3 }}
                   >
                     <Image
-                      src="/appstore.png"
+                      src="appstore.png"
                       alt="RizzCheck App Screenshot on App Store" 
                       width={800}
                       height={450}
