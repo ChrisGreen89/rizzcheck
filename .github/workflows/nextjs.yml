@@ -84,11 +84,11 @@ jobs:
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Debug folder contents
-        run: ls -R ./marketing-site
+        run: ls -R .
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./marketing-site/out
+          path: ./out
 
   # Deployment job
   deploy:
