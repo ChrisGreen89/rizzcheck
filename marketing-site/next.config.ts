@@ -1,7 +1,8 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+const nextConfig = {
+  output: 'export', // 👈 Enables static export
+  // Optional: if your repo is hosted in a subfolder (e.g. github.com/yourname/repo)
+  basePath: '/rizzcheck',
+  assetPrefix: '/rizzcheck/',
 };
 
 export default nextConfig;
