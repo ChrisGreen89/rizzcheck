@@ -63,128 +63,131 @@ class MyApp extends StatelessWidget {
       child: Builder(
         // Use Builder to get context below providers
         builder: (context) {
-          // Re-apply the custom theme definition
-          const defaultColorScheme = ColorScheme(
+          // Define a new "pre-teen" light theme
+          const lightColorScheme = ColorScheme(
             brightness: Brightness.light,
-            primary: Color(0xFF00A9B7), // Tealish
-            onPrimary: Colors.white,
-            secondary: Color(0xFFFFC857), // Yellowish
-            onSecondary: Colors.black87,
-            error: Color(0xFFE53935), // Red
+            primary: Colors.deepOrange, // Vibrant Orange
+            onPrimary: Colors.white, // Text on Orange
+            secondary: Colors.blue, // Complementary Blue
+            onSecondary: Colors.white, // Text on Blue
+            error: Colors.redAccent,
             onError: Colors.white,
-            surface: Color(0xFFF0F4F8), // Light grey-blue
-            onSurface: Color(0xFF333333), // Dark grey
-            surfaceContainerHighest: Color(0xFFFFFFFF), // White for cards
-            onSurfaceVariant: Color(0xFF555555), // Medium grey
+            surface: Colors.white, // Clean white background
+            onSurface: Color(0xFF333333), // Dark Grey text
+            surfaceContainerHighest:
+                Color(0xFFF5F5F5), // Very light grey for cards/appbar
+            onSurfaceVariant: Color(0xFF666666), // Medium Grey text
           );
 
           final baseTextTheme = GoogleFonts.nunitoTextTheme();
-          final customTextTheme = baseTextTheme.copyWith(
-            // Apply default display/body colors first based on default theme
+          // Adjust text theme for light background
+          final lightTextTheme = baseTextTheme.copyWith(
             displayLarge: baseTextTheme.displayLarge
-                ?.copyWith(color: defaultColorScheme.onSurface),
+                ?.copyWith(color: lightColorScheme.onSurface),
             displayMedium: baseTextTheme.displayMedium
-                ?.copyWith(color: defaultColorScheme.onSurface),
+                ?.copyWith(color: lightColorScheme.onSurface),
             displaySmall: baseTextTheme.displaySmall
-                ?.copyWith(color: defaultColorScheme.onSurface),
-            headlineLarge: baseTextTheme.headlineLarge?.copyWith(
-                color: defaultColorScheme.onSurface), // Explicit dark
-            headlineMedium: baseTextTheme.headlineMedium?.copyWith(
-                color: defaultColorScheme.onSurface), // Explicit dark
+                ?.copyWith(color: lightColorScheme.onSurface),
+            headlineLarge: baseTextTheme.headlineLarge
+                ?.copyWith(color: lightColorScheme.onSurface),
+            headlineMedium: baseTextTheme.headlineMedium
+                ?.copyWith(color: lightColorScheme.onSurface),
             headlineSmall: baseTextTheme.headlineSmall?.copyWith(
-                color: defaultColorScheme.onPrimary,
+                color: lightColorScheme.onPrimary, // White text on AppBar
                 fontWeight: FontWeight.bold,
-                fontSize: 20), // AppBar Title - KEEP WHITE
+                fontSize: 20),
             titleLarge: baseTextTheme.titleLarge?.copyWith(
-                color: defaultColorScheme.onSurface), // Explicit dark
+                color: lightColorScheme.onSurface), // Headers - Dark Grey
             titleMedium: baseTextTheme.titleMedium?.copyWith(
-                color: defaultColorScheme.onSurface,
+                color: lightColorScheme.onSurface,
                 fontWeight: FontWeight.w600,
-                fontSize: 16), // Task Titles - Dark
+                fontSize: 16), // Task Titles - Dark Grey
             titleSmall: baseTextTheme.titleSmall
-                ?.copyWith(color: defaultColorScheme.onSurfaceVariant),
+                ?.copyWith(color: lightColorScheme.onSurfaceVariant),
             bodyLarge: baseTextTheme.bodyLarge
-                ?.copyWith(color: defaultColorScheme.onSurface),
+                ?.copyWith(color: lightColorScheme.onSurface),
             bodyMedium: baseTextTheme.bodyMedium?.copyWith(
-                color: defaultColorScheme
+                color: lightColorScheme
                     .onSurfaceVariant), // Task Descriptions - Medium Grey
             bodySmall: baseTextTheme.bodySmall
-                ?.copyWith(color: defaultColorScheme.onSurfaceVariant),
+                ?.copyWith(color: lightColorScheme.onSurfaceVariant),
             labelLarge: baseTextTheme.labelLarge?.copyWith(
-                color: defaultColorScheme
-                    .onPrimary), // Button text? - White on Primary
+                color: lightColorScheme
+                    .onSecondary), // Button text - White on Blue
             labelMedium: baseTextTheme.labelMedium
-                ?.copyWith(color: defaultColorScheme.onSurfaceVariant),
+                ?.copyWith(color: lightColorScheme.onSurfaceVariant),
             labelSmall: baseTextTheme.labelSmall
-                ?.copyWith(color: defaultColorScheme.onSurfaceVariant),
+                ?.copyWith(color: lightColorScheme.onSurfaceVariant),
           );
 
           return MaterialApp(
-            title: 'Boygiene',
+            title: 'RizzCheck',
             theme: ThemeData(
-              // Apply the custom theme components
-              colorScheme: defaultColorScheme,
-              textTheme: customTextTheme,
-              scaffoldBackgroundColor: defaultColorScheme.surface,
+              colorScheme: lightColorScheme,
+              textTheme: lightTextTheme,
+              scaffoldBackgroundColor: lightColorScheme.surface,
               appBarTheme: AppBarTheme(
-                backgroundColor: defaultColorScheme.primary,
-                foregroundColor: defaultColorScheme.onPrimary,
-                elevation: 0, // Flat appbar look
-                centerTitle: false, // Align title to the left
-                titleTextStyle:
-                    customTextTheme.headlineSmall, // Use defined style
+                backgroundColor: lightColorScheme.primary, // Orange AppBar BG
+                foregroundColor:
+                    lightColorScheme.onPrimary, // Icons on App Bar (White)
+                elevation: 1, // Give slight elevation back
+                shadowColor: Colors.black.withOpacity(0.1),
+                centerTitle: false,
+                titleTextStyle: lightTextTheme
+                    .headlineSmall, // Uses white text defined above
               ),
               cardTheme: CardTheme(
-                elevation: 0, // Flat card look
-                color:
-                    defaultColorScheme.surfaceContainerHighest, // White cards
+                elevation: 0.5, // Subtle elevation
+                color: lightColorScheme
+                    .surfaceContainerHighest, // Very light grey cards
                 margin:
                     const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
                 shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(12.0), // Slightly more rounded
+                  borderRadius: BorderRadius.circular(10.0), // Less rounded
+                  side: BorderSide(
+                      color: Colors.black.withOpacity(0.05)), // Subtle border
                 ),
               ),
               checkboxTheme: CheckboxThemeData(
                 fillColor: MaterialStateProperty.resolveWith((states) {
                   if (states.contains(MaterialState.selected)) {
-                    return defaultColorScheme.primary;
+                    return lightColorScheme.primary; // Orange when checked
                   }
-                  // Use a subtle grey when unchecked
-                  return defaultColorScheme.onSurface.withOpacity(0.1);
+                  return lightColorScheme.onSurface
+                      .withOpacity(0.1); // Light grey unchecked box
                 }),
                 checkColor: MaterialStateProperty.all(
-                    defaultColorScheme.onPrimary), // White check
+                    lightColorScheme.onPrimary), // White check
                 side: BorderSide(
                   // Define border color when unchecked
-                  color: defaultColorScheme.onSurface.withOpacity(0.3),
+                  color: lightColorScheme.onSurface.withOpacity(0.3),
                 ),
               ),
               elevatedButtonTheme: ElevatedButtonThemeData(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: defaultColorScheme
-                        .secondary, // Use secondary color for buttons
+                    backgroundColor: lightColorScheme.secondary, // Blue buttons
                     foregroundColor:
-                        defaultColorScheme.onSecondary, // Text color on buttons
+                        lightColorScheme.onSecondary, // White text on buttons
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 12.0),
-                    textStyle: customTextTheme.labelLarge
-                        ?.copyWith(color: defaultColorScheme.onSecondary)),
+                    textStyle: lightTextTheme
+                        .labelLarge // Uses white text defined above
+                    ),
               ),
               dividerTheme: DividerThemeData(
-                color: defaultColorScheme.onSurface.withOpacity(0.1),
+                color: lightColorScheme.onSurface.withOpacity(0.1),
                 space: 1,
                 thickness: 1,
               ),
               bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                backgroundColor: defaultColorScheme.surfaceContainerHighest,
-                selectedItemColor: defaultColorScheme.primary,
+                backgroundColor: lightColorScheme.surfaceContainerHighest,
+                selectedItemColor: lightColorScheme.primary, // Orange selected
                 unselectedItemColor:
-                    defaultColorScheme.onSurface.withOpacity(0.6),
-                elevation: 4, // Give it a slight shadow
+                    lightColorScheme.onSurface.withOpacity(0.6),
+                elevation: 2, // Give it a slight shadow
               ),
               useMaterial3: true,
             ),

@@ -16,35 +16,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  late PointsService _pointsService;
-  Set<DateTime> _completedDays = {};
 
-  @override
-  void initState() {
-    super.initState();
-    _pointsService = context.read<PointsService>();
-    _loadCompletedDays();
-    _pointsService.addListener(_loadCompletedDays); // Reload if dates change
-  }
-
-  @override
-  void dispose() {
-    _pointsService.removeListener(_loadCompletedDays);
-    super.dispose();
-  }
-
-  void _loadCompletedDays() {
-    final dateStrings = _pointsService.getCompletedDates();
-    setState(() {
-      _completedDays = dateStrings.map((str) => DateTime.parse(str)).toSet();
-    });
-  }
-
-  // Function to determine if a day should be marked as completed
+  // Helper to check if a day was completed
   bool _isDayCompleted(DateTime day) {
-    // Normalize day to ignore time component for comparison
-    final normalizedDay = DateTime(day.year, day.month, day.day);
-    return _completedDays.contains(normalizedDay);
+    final pointsService = context.read<PointsService>();
+    final dateString = DateFormat('yyyy-MM-dd').format(day);
+    return pointsService.getCompletedDates().contains(dateString);
   }
 
   @override
@@ -52,78 +29,97 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Progress Calendar'),
-        // Theme handles styling
       ),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
-          TableCalendar(
-            firstDay: DateTime.utc(2020, 1, 1), // Allow scrolling back
-            lastDay: DateTime.utc(
-                DateTime.now().year + 1, 12, 31), // Allow scrolling forward
-            focusedDay: _focusedDay,
-            calendarFormat: _calendarFormat,
-            selectedDayPredicate: (day) {
-              // Optional: Logic for selecting a day
-              return isSameDay(_selectedDay, day);
-            },
-            onDaySelected: (selectedDay, focusedDay) {
-              // Optional: Handle day selection
-              // if (!isSameDay(_selectedDay, selectedDay)) {
-              //   setState(() {
-              //     _selectedDay = selectedDay;
-              //     _focusedDay = focusedDay;
-              //   });
-              // }
-            },
-            onFormatChanged: (format) {
-              if (_calendarFormat != format) {
-                setState(() {
-                  _calendarFormat = format;
-                });
-              }
-            },
-            onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
-            },
-            calendarBuilders: CalendarBuilders(
-              markerBuilder: (context, day, events) {
-                // Use markerBuilder to add our custom completion marker (e.g., a star)
-                if (_isDayCompleted(day)) {
-                  return Positioned(
-                    right: 1,
-                    bottom: 1,
-                    child: Icon(
-                      Icons.star,
-                      size: 16.0,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                  );
-                }
-                return null; // Return null if no marker needed
-              },
-            ),
-            calendarStyle: CalendarStyle(
-              // Customize appearance
-              todayDecoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                shape: BoxShape.circle,
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Consumer<PointsService>(
+                  builder: (context, pointsService, child) {
+                    return TableCalendar(
+                      firstDay: DateTime.utc(2020, 1, 1),
+                      lastDay: DateTime.utc(DateTime.now().year + 1, 12, 31),
+                      focusedDay: _focusedDay,
+                      calendarFormat: _calendarFormat,
+                      selectedDayPredicate: (day) =>
+                          isSameDay(_selectedDay, day),
+                      onDaySelected: (selectedDay, focusedDay) {
+                        if (!isSameDay(_selectedDay, selectedDay)) {
+                          setState(() {
+                            _selectedDay = selectedDay;
+                            _focusedDay = focusedDay;
+                          });
+                        }
+                      },
+                      onFormatChanged: (format) {
+                        if (_calendarFormat != format) {
+                          setState(() {
+                            _calendarFormat = format;
+                          });
+                        }
+                      },
+                      onPageChanged: (focusedDay) {
+                        _focusedDay = focusedDay;
+                      },
+                      calendarBuilders: CalendarBuilders(
+                        markerBuilder: (context, day, events) {
+                          final dateString =
+                              DateFormat('yyyy-MM-dd').format(day);
+                          if (pointsService
+                              .getCompletedDates()
+                              .contains(dateString)) {
+                            return Positioned(
+                              right: 1,
+                              bottom: 1,
+                              child: Icon(
+                                Icons.star_rounded,
+                                size: 16.0,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            );
+                          }
+                          return null;
+                        },
+                      ),
+                      calendarStyle: CalendarStyle(
+                        todayDecoration: BoxDecoration(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.3),
+                          shape: BoxShape.circle,
+                        ),
+                        selectedDecoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        weekendTextStyle: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6)),
+                        outsideTextStyle: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.4)),
+                      ),
+                      headerStyle: HeaderStyle(
+                        formatButtonVisible: false,
+                        titleCentered: true,
+                        titleTextStyle: TextStyle(
+                            fontSize: 18.0,
+                            color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                    );
+                  },
+                ),
               ),
-              selectedDecoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                shape: BoxShape.circle,
-              ),
-              markerDecoration: const BoxDecoration(
-                  // Default marker style if using events (we use markerBuilder instead)
-                  // color: Colors.blue,
-                  // shape: BoxShape.circle,
-                  ),
-            ),
-            headerStyle: HeaderStyle(
-              formatButtonVisible: false, // Hide format button (Month/Week)
-              titleCentered: true,
             ),
           ),
-          // Optional: Add a legend or summary below the calendar
         ],
       ),
     );

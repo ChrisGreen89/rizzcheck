@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/points_service.dart';
-// import 'package:intl/intl.dart'; // No longer needed here
+// Remove ModernHeader import
+// import '../widgets/modern_header.dart';
+// Remove Bubble Background import
+// import '../widgets/bubble_background_painter.dart';
 
 class ShopScreen extends StatelessWidget {
   const ShopScreen({super.key});
@@ -23,14 +26,16 @@ class ShopScreen extends StatelessWidget {
     final bool canAffordScreenTime = currentPoints >= screenTimeCost;
 
     return Scaffold(
+      // Re-add AppBar
       appBar: AppBar(
-        title: Text('Shop (Points: $currentPoints)'),
+        title: Text('RizzCheck Shop (Points: $currentPoints)'),
       ),
-      // Use a ListView to accommodate future items
+      backgroundColor: Theme.of(context).colorScheme.background,
+      // Revert to simple ListView body
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          // --- Drive-In Reward Item ---
+          // Shop items remain the same
           _buildRewardCard(
             context: context,
             pointsService: pointsService,
@@ -40,8 +45,6 @@ class ShopScreen extends StatelessWidget {
             cost: driveInCost,
             canAfford: canAffordDriveIn,
           ),
-
-          // --- Batting Cage Reward Item ---
           const SizedBox(height: 10),
           _buildRewardCard(
             context: context,
@@ -52,8 +55,6 @@ class ShopScreen extends StatelessWidget {
             cost: battingCageCost,
             canAfford: canAffordBattingCage,
           ),
-
-          // --- Soda Reward Item ---
           const SizedBox(height: 10),
           _buildRewardCard(
             context: context,
@@ -64,8 +65,6 @@ class ShopScreen extends StatelessWidget {
             cost: sodaCost,
             canAfford: canAffordSoda,
           ),
-
-          // --- Screen Time Reward Item ---
           const SizedBox(height: 10),
           _buildRewardCard(
             context: context,
@@ -76,8 +75,6 @@ class ShopScreen extends StatelessWidget {
             cost: screenTimeCost,
             canAfford: canAffordScreenTime,
           ),
-
-          // --- Placeholder for future items ---
           const Padding(
             padding: EdgeInsets.only(top: 40.0, bottom: 10.0),
             child: Text(
@@ -134,6 +131,7 @@ class ShopScreen extends StatelessWidget {
 
                   if (confirmed == true) {
                     bool success = await pointsService.spendPoints(cost);
+                    if (!context.mounted) return;
                     if (success) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
